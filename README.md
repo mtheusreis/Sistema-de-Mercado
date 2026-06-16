@@ -6,7 +6,7 @@ Este é o protótipo inicial de um sistema de gerenciamento de mercado desenvolv
 
 ## Integrantes do Grupo
 * Matheus de Oliveira Reis Pereira
-* Marcos
+* Marcos Vinicius Rodrigues da Costa
 * Davi Miguel Moreira Resende 
 
 ---
