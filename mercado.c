@@ -110,33 +110,26 @@ int main(){
 
     estoque = aloca(tamanhoEstoque);
 
-    printf("saldo inicial: %f\n", saldo);
-
     printf("Insere tres produtos (nome, qtd, preco)\n");
     insereProduto(estoque, &id);
     insereProduto(estoque, &id);
     insereProduto(estoque, &id);
-    printf("saldo inicial: %f\n", saldo);
     printf("Modifica preco: codigo preço\n");
     modificaPreco(estoque);
-    printf("saldo inicial: %f\n", saldo);
     printf("Aumenta estoque: codigo qtd\n");
-    printf("saldo inicial: %f\n", saldo);
     aumentaEstoque(estoque, &saldo);
-    printf("saldo inicial: %f\n", saldo);
     printf("consulta estoque\n");
     consultaEstoque(estoque, &id);
     printf("consulta saldo\n");
     consultaSaldo(&saldo);
 
     //enqunto comando nao for FE, continua
-
-
+    
     /* while(comando != "FE"){
-        //limpa buffer
+        //espera comandos até fechamento 
     } */
 
-    //LEMBRAR DE DAR FREE SE NAP RUDECO VAI COMER A GENTE
+    //free das alocações
 
 
     return 0;
