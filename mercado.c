@@ -42,18 +42,18 @@ void aumentaEstoque(produto *estoque, float *saldo){
 
 void venda(produto *estoque, float *saldo){
 
-    int id = 1;
+    int id;
     float total = 0;
 
-    while(id > 0){
+    while(1){
         scanf("%d", &id);
         if(id < 0) break;
         estoque[id].qtd -= 1;
         *saldo = *saldo + estoque[id].preco;
         total = total + estoque[id].preco;
-        printf("%s %f\n", estoque[id].nome, estoque[id].preco);
+        printf("%s %.2f\n", estoque[id].nome, estoque[id].preco);
     }
-    printf("Total: %f\n", total);
+    printf("Total: %.2f\n", total);
     printf("--------------------------------------------------\n");
 
 }
@@ -86,7 +86,7 @@ void consultaEstoque(produto *estoque, int *id){
 }
 
 void consultaSaldo(float *saldo){
-    printf("%f\n", *saldo);
+    printf("%.2f\n", *saldo);
     printf("--------------------------------------------------\n");
 
 }
@@ -102,6 +102,7 @@ produto* aloca(int n){
 
 int main(){
 
+    char comando[3] = "a";
     int tamanhoEstoque, id = 0;
     produto *estoque;
     float saldo = 100;
@@ -110,7 +111,7 @@ int main(){
 
     estoque = aloca(tamanhoEstoque);
 
-    printf("Insere tres produtos (nome, qtd, preco)\n");
+    /*printf("Insere tres produtos (nome, qtd, preco)\n");
     insereProduto(estoque, &id);
     insereProduto(estoque, &id);
     insereProduto(estoque, &id);
@@ -123,11 +124,34 @@ int main(){
     printf("consulta saldo\n");
     consultaSaldo(&saldo);
 
-    //enqunto comando nao for FE, continua
+    //enqunto comando nao for FE, continua*/
     
-    /* while(comando != "FE"){
-        //espera comandos até fechamento 
-    } */
+     while(1){
+        scanf("%s", comando);
+        if ((comando[0]=='I')&&(comando[1]=='P')){
+            insereProduto(estoque,&id);
+        }
+        if ((comando[0]=='A')&&(comando[1]=='E')){
+            aumentaEstoque(estoque, &saldo);
+        }
+        if ((comando[0]=='M')&&(comando[1]=='P')){
+            modificaPreco(estoque);
+        }
+        if ((comando[0]=='V')&&(comando[1]=='E')){
+            venda(estoque, &saldo);
+        }
+        if ((comando[0]=='C')&&(comando[1]=='E')){
+            consultaEstoque(estoque, &id);
+        }
+        if ((comando[0]=='C')&&(comando[1]=='S')){
+            consultaSaldo(&saldo);
+        }
+        if ((comando[0]=='F')&&(comando[1]=='E')){
+            //logica de salvar o arquivo
+            break;
+        }
+        
+    } 
 
     //free das alocações
 
