@@ -30,7 +30,7 @@ produto* aloca(int n){
 }
 
 void inicializar(float *saldo, produto **estoque, int *id){
-    FILE *arq = fopen("mercadinho.bin", "rb");
+    FILE *arq = fopen("estoque.bin", "rb");
     int tamanhoEstoque;
     if(arq != NULL){
         fread(id, sizeof(int), 1, arq);
@@ -148,7 +148,7 @@ void fechaArquivo(FILE *arquivo){
 }
  
 void finalizarDia(produto *estoque, float *saldo, int *id){
-    FILE *arq = fopen("mercadinho.bin", "wb");
+    FILE *arq = fopen("estoque.bin", "wb");
     if(arq == NULL){
         printf("Falha ao salvar o arquivo.");
         exit(1);
