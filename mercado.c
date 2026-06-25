@@ -1,3 +1,12 @@
+/*
+PROJETO MERCADINHO
+O objetivo principal do projeto é criar um sistema que permita
+o gerenciamento de um mercado. Por meio de diversas funções será possível 
+realizar ações como vendas e 
+*/
+
+
+//Definindo as diretives de pre-processamento
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,17 +19,59 @@ typedef struct produto{
 
 } produto;
 
+//usada às sextas-feiras| tem como parâmetro quantos produtos vão caber no estoque
+produto* aloca(int n){
+    produto *alocar = (produto*) malloc(n*sizeof(produto)); 
+    if (alocar==NULL){
+        printf("Erro ao alocar memória.");
+        exit(1);
+    }
+    return alocar;
+}
+
+void inicializar(float *saldo, produto **estoque, int *id){
+    FILE *arq = fopen("mercadinho.bin", "rb");
+    int tamanhoEstoque;
+    if(arq != NULL){
+        fread(id, sizeof(int), 1, arq);
+        fread(saldo, sizeof(float), 1, arq);
+        *estoque = aloca(*id);
+        fread(*estoque, sizeof(produto), *id, arq);
+        fclose(arq);
+        
+        return;
+    } else{
+        
+        *id = 0;
+        *saldo = 100.00;
+        scanf("%d", &tamanhoEstoque);
+        *estoque = aloca(tamanhoEstoque);
+        return;
+        
+    }
+} 
+
 //Funções ultilizadas pelo sistema
 
 //função lẽ as informações do produto e o insere no estoque |
 //parametros: vetor do estoque alocado dinamicamente e ponteiro para ID, que aumenta de 1 em 1 em cada chamada da função 
-void insereProduto(produto *estoque, int *id){
+void insereProduto(produto **estoque, int *id){
     
+    int novotamanho = *id + 1;
 
-    scanf("%s", estoque[*id].nome);
-    scanf("%d", &estoque[*id].qtd);
-    scanf("%f", &estoque[*id].preco);
-    estoque[*id].id = *id;
+    //realoca aumentando o tamanho do estoque para receber o novo produto
+    produto *temp = (produto*) realloc( *estoque, novotamanho * sizeof(produto));
+    if(temp == NULL) {
+        printf("Falha ao realocar memória.");
+        exit(1);
+    }  
+
+    *estoque = temp;
+
+    scanf("%s", (*estoque)[*id].nome);
+    scanf("%d", &(*estoque)[*id].qtd);
+    scanf("%f", &(*estoque)[*id].preco);
+    (*estoque)[*id].id = *id;
     *id = *id + 1;
     
     return;
@@ -30,6 +81,7 @@ void insereProduto(produto *estoque, int *id){
 //função que aumenta a quantidade em estoque de um produto e retira do saldo proporcionalmente
 //parãmetros: vetor de structs do estoque e ponteiro para saldo 
 void aumentaEstoque(produto *estoque, float *saldo){
+    
     int id, qtdAdc;
     scanf("%d", &id);
     scanf("%d", &qtdAdc);
@@ -86,50 +138,46 @@ void consultaEstoque(produto *estoque, int *id){
 }
 
 void consultaSaldo(float *saldo){
-    printf("%.2f\n", *saldo);
+    printf("Saldo: %.2f\n", *saldo);
     printf("--------------------------------------------------\n");
 
 }
-void finalizarDia(produto *estoque, float *saldo){
-    //aqui vai fazer a logica do arquivo
+
+void fechaArquivo(FILE *arquivo){
+    fclose(arquivo);
+}
+ 
+void finalizarDia(produto *estoque, float *saldo, int *id){
+    FILE *arq = fopen("mercadinho.bin", "wb");
+    if(arq == NULL){
+        printf("Falha ao salvar o arquivo.");
+        exit(1);
+    }
+
+    fwrite(id, sizeof(int), 1, arq);
+    fwrite(saldo, sizeof(float), 1, arq);
+    fwrite(estoque, sizeof(produto), *id, arq);
+
+    fclose(arq);
+    
+
 }
 
-//usada quando não ha arquivo do dia anterior | tem como parâmetro quantos produtos vão caber no estoque
-produto* aloca(int n){
-    produto *alocar = (produto*) malloc(n*sizeof(produto)); 
-    return alocar;
-}
 
 int main(){
 
     char comando[3] = "a";
-    int tamanhoEstoque, id = 0;
+    int id;
+    float saldo;
     produto *estoque;
-    float saldo = 100;
-    
-    scanf("%d", &tamanhoEstoque);
-
-    estoque = aloca(tamanhoEstoque);
-
-    /*printf("Insere tres produtos (nome, qtd, preco)\n");
-    insereProduto(estoque, &id);
-    insereProduto(estoque, &id);
-    insereProduto(estoque, &id);
-    printf("Modifica preco: codigo preço\n");
-    modificaPreco(estoque);
-    printf("Aumenta estoque: codigo qtd\n");
-    aumentaEstoque(estoque, &saldo);
-    printf("consulta estoque\n");
-    consultaEstoque(estoque, &id);
-    printf("consulta saldo\n");
-    consultaSaldo(&saldo);
+    inicializar(&saldo, &estoque, &id);
 
     //enqunto comando nao for FE, continua*/
     
      while(1){
         scanf("%s", comando);
         if ((comando[0]=='I')&&(comando[1]=='P')){
-            insereProduto(estoque,&id);
+            insereProduto(&estoque,&id);
         }
         if ((comando[0]=='A')&&(comando[1]=='E')){
             aumentaEstoque(estoque, &saldo);
@@ -148,12 +196,14 @@ int main(){
         }
         if ((comando[0]=='F')&&(comando[1]=='E')){
             //logica de salvar o arquivo
+            finalizarDia(estoque, &saldo, &id); 
             break;
         }
         
     } 
 
     //free das alocações
+    free(estoque);
 
 
     return 0;
