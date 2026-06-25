@@ -92,7 +92,7 @@ void aumentaEstoque(produto *estoque, float *saldo){
     
 }
 
-void venda(produto *estoque, float *saldo){
+void venda(produto *estoque, float *saldo, int n){
 
     int id;
     float total = 0;
@@ -100,6 +100,8 @@ void venda(produto *estoque, float *saldo){
     while(1){
         scanf("%d", &id);
         if(id < 0) break;
+        if(estoque[id].qtd < 1) continue;
+        if(id >= n) continue;
         estoque[id].qtd -= 1;
         *saldo = *saldo + estoque[id].preco;
         total = total + estoque[id].preco;
@@ -186,7 +188,7 @@ int main(){
             modificaPreco(estoque);
         }
         if ((comando[0]=='V')&&(comando[1]=='E')){
-            venda(estoque, &saldo);
+            venda(estoque, &saldo, id);
         }
         if ((comando[0]=='C')&&(comando[1]=='E')){
             consultaEstoque(estoque, &id);
